@@ -1,0 +1,124 @@
+// CONSUMING PROMISES
+
+const cart=["shoes", "kurta"];
+// api create order
+createOrder(cart);
+// another api
+proceedToPaymet(orderId)
+// so these both are async 
+/////
+// traditionally used to tdo using callback functions
+
+// designing api functions  such as ,
+// responsisbilty of create order api ; once order is created
+// such as 
+createOrder(cart,function(orderId){
+    proceedToPaymetToPayment(orderId);
+})
+// but there is an issue here ; inversion of  control
+// means  we have passed this callback function ; that at somet
+//Inversion of control (IoC) is a design principle in software engineering where the control over a particular process is transferred
+// to an external component or framework. 
+//In the context of asynchronous JavaScript, this often involves passing callbacks to functions, which are then executed when the asynchronous operation is complete.
+
+ createOrder(cart) //it ewill return a promise 
+ const promise =createOrder(cart); // this api is async operation
+ // it will return {data:undefined} () // initally 
+ // whenever js will excute the line 23 , the createOrder api will 
+ // return an empty object and the program will just go on excuting and after 5 sec
+ // or any sec the promise object will fill this data automaticaaly
+
+ // once we have this data 
+ // we will aattach a callback dunction to this promise object
+ promise.then(function(orderId){
+    proceedToPaymet(orderId)
+ }); // promises gives us this trust that as soon as we have this data it will call tthis fucntion once and the control remains with us 
+
+ //////////////////////////////////////
+
+ const GITHUB_API= "";
+ fetch()// its as api given by browser
+ // this fetch function returns us a promise
+ const user =fetch(GITHUB_API);
+ 
+ // PROMISE STATE
+//  STATE OF A PROMISE => RESULT 
+//  => PROMISE STATE => INITLALY => PENDING STATE 
+//  => FULFILLED
+
+
+// WHAT IF HAD A CALLBACK FN ATTACHed 
+ user.then(function(data){
+    console.log(data);
+ })
+ // PROMISE OBJECTS are immutable
+
+ //////////////////////
+ // what is promise?
+ // promise object is a placeholder for a asycn operations by the time we get the value
+ // as a container for the future value
+ // a promise is an object represting the eventual completion or failure of an async operation (IMP DEFINITION)
+
+/// one more issue with callback such as callback hell
+
+//To make it a bit complicated, what if after payment is done, you have to show Order summary by calling api.showOrderSummary() and now it has dependency on api.proceedToPayment() Now my code should look something like this:
+
+api.createOrder(cart, function () {
+  api.proceedToPayment(function () {
+    api.showOrderSummary();
+  });
+});
+//Now what if we have to update the wallet, now this will have a dependency over showOrderSummary
+
+api.createOrder(cart, function () {
+  api.proceedToPayment(function () {
+    api.showOrderSummary(function () {
+      api.updateWallet();
+    });
+  });
+}); // instead of growing vertically it starts to grow horizintally
+// 💡 Callback Hell
+// When we have a large codebase and multiple apis and have dependency on each other, then we fall into callback hell. These codes are tough to maintain. These callback hell structure is also known as Pyramid of Doom.
+
+ // it is hanlded using Promise chaining
+
+ const promisee = createOrder(cart);
+
+ promise.then(function(orderId){
+    proceedToPayment(orderId);
+
+ })
+
+ // or the above can also be written as 
+ createOrder(cart).then(function(orderId){
+    proceedToPayment(orderId);
+
+ })
+ .then(function(paymentInfo){
+    showOrderSummary(paymentInfo);
+
+ })
+ .then(function(paymentInfo){
+    updateWallet(paymentInfo)
+ })
+
+ // ALWAYS REMEBER TO RETURN A PROMISE FROM A PROMISE, TO PASS ON THE VALUE,
+ // TO GET THE DATA PROPERY IN THE CHAIN
+
+ createOrder(cart).then(function(orderId){
+    return proceedToPayment(orderId);
+
+ })
+ .then(function(paymentInfo){
+    return showOrderSummary(paymentInfo);
+
+ })
+ .then(function(paymentInfo){
+    return  updateWallet(paymentInfo)
+ })
+
+// using arrow function ; looking a more lean
+createOder(cart)
+   .then(orderId => proceedToPayment(orderId))
+   .then(paymentInfo => showOrderSummary(paymentInfo))
+   .then(paymentInfo => updateWalletBalance(paymentInfo))
